@@ -1,0 +1,50 @@
+#!/bin/bash
+
+# prepare-commit-msg hook for enforcing conventional commits
+# This hook helps ensure consistent commit message format
+
+COMMIT_MSG_FILE=$1
+COMMIT_SOURCE=$2
+
+# Skip if this is a merge commit
+if [ "$COMMIT_SOURCE" == "merge" ]; then
+    exit 0
+fi
+
+# Skip if this is an amend
+if [ "$COMMIT_SOURCE" == "commit" ]; then
+    exit 0
+fi
+
+# Read the current commit message
+if [ -f "$COMMIT_MSG_FILE" ]; then
+    COMMIT_MSG=$(cat "$COMMIT_MSG_FILE")
+else
+    COMMIT_MSG=""
+fi
+
+# Check if the message already follows conventional commit format
+if echo "$COMMIT_MSG" | grep -qE "^(feat|fix|docs|style|refactor|test|chore)(\(.+\))?: .{1,50}"; then
+    exit 0
+fi
+
+# If the message is empty or doesn't follow format, provide a template
+if [ -z "$COMMIT_MSG" ] || [ "$COMMIT_MSG" == "" ]; then
+    echo "# Conventional Commit Format:" > "$COMMIT_MSG_FILE"
+    echo "# <type>[optional scope]: <description>" >> "$COMMIT_MSG_FILE"
+    echo "#" >> "$COMMIT_MSG_FILE"
+    echo "# Types:" >> "$COMMIT_MSG_FILE"
+    echo "#   feat:     새로운 기능 추가" >> "$COMMIT_MSG_FILE"
+    echo "#   fix:      버그 수정" >> "$COMMIT_MSG_FILE"
+    echo "#   docs:     문서 수정" >> "$COMMIT_MSG_FILE"
+    echo "#   style:    코드 스타일 변경 (formatting, missing semi colons, etc)" >> "$COMMIT_MSG_FILE"
+    echo "#   refactor: 코드 리팩토링" >> "$COMMIT_MSG_FILE"
+    echo "#   test:     테스트 코드 추가 또는 수정" >> "$COMMIT_MSG_FILE"
+    echo "#   chore:    빌드, 설정 파일 수정" >> "$COMMIT_MSG_FILE"
+    echo "#" >> "$COMMIT_MSG_FILE"
+    echo "# Example: feat(auth): add user login functionality" >> "$COMMIT_MSG_FILE"
+    echo "" >> "$COMMIT_MSG_FILE"
+    echo "feat: " >> "$COMMIT_MSG_FILE"
+fi
+
+exit 0

@@ -1,0 +1,47 @@
+#!/bin/bash
+
+# commit-msg hook for validating conventional commits
+# This hook validates that commit messages follow conventional commit format
+
+COMMIT_MSG_FILE=$1
+
+# Read the commit message
+COMMIT_MSG=$(cat "$COMMIT_MSG_FILE")
+
+# Remove comments and empty lines
+COMMIT_MSG=$(echo "$COMMIT_MSG" | sed '/^#/d' | sed '/^$/d' | head -n 1)
+
+# Skip if no commit message
+if [ -z "$COMMIT_MSG" ]; then
+    exit 0
+fi
+
+# Conventional commit pattern
+PATTERN="^(feat|fix|docs|style|refactor|test|chore)(\(.+\))?: .{1,50}$"
+
+if echo "$COMMIT_MSG" | grep -qE "$PATTERN"; then
+    echo "✅ Commit message follows conventional commit format"
+    exit 0
+else
+    echo "❌ Invalid commit message format!"
+    echo ""
+    echo "Current message: $COMMIT_MSG"
+    echo ""
+    echo "Expected format: <type>[optional scope]: <description>"
+    echo ""
+    echo "Types:"
+    echo "  feat:     새로운 기능 추가"
+    echo "  fix:      버그 수정"
+    echo "  docs:     문서 수정"
+    echo "  style:    코드 스타일 변경"
+    echo "  refactor: 코드 리팩토링"
+    echo "  test:     테스트 코드 추가 또는 수정"
+    echo "  chore:    빌드, 설정 파일 수정"
+    echo ""
+    echo "Examples:"
+    echo "  feat: add user authentication"
+    echo "  fix(api): resolve null pointer exception"
+    echo "  docs: update README with installation guide"
+    echo ""
+    exit 1
+fi

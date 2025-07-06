@@ -1,0 +1,25 @@
+spring:
+  application:
+    name: demo
+
+  datasource:
+    url: jdbc:mysql://localhost:13306/bcgsample
+    username: hyozkim
+    password: 1234
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: none # update 또는 create, validate, none
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.MySQL8Dialect
+
+influxdb:
+  url: http://localhost:8086
+  token: 6KmBgSrBV-tRx4w49n6YJKvahC9u8LQt5utApg2U4WKX2G8lzCVwgJaErKGa0UYpQXA-VIfkZBFIscYWlspppw==  # InfluxDB 2.x 인증 토큰
+  org: org1  # 조직 이름
+  bucket: bucket1  # 버킷 이름
+  retention-policy: autogen  # 보존 정책
